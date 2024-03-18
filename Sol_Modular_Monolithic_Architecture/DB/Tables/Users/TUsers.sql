@@ -1,0 +1,21 @@
+﻿CREATE TABLE [UserSchema].[TUsers]
+(
+	[Id] NUMERIC identity(1,1) NOT NULL PRIMARY KEY, 
+    [Identifier] UNIQUEIDENTIFIER NOT NULL, 
+    [FirstName] VARCHAR(50) NOT NULL, 
+    [LastName] VARCHAR(50) NOT NULL, 
+    [EmailId] VARCHAR(100) NOT NULL, 
+    [MobileNo] VARCHAR(50) NOT NULL, 
+    [UserType] INT NOT NULL, 
+    [Salt] VARCHAR(MAX) NOT NULL, 
+    [Hash] VARCHAR(MAX) NOT NULL, 
+    [Status] BIT NOT NULL,
+    [IsEmailVerified] bit NULL,
+    [EmailToken] UNIQUEIDENTIFIER NULL,
+    [RefreshToken] Varchar(MAX) NULL,
+    [RefreshTokenExpiryTime] DATETIME NULL,
+    [PasswordResetToken] UNIQUEIDENTIFIER NULL,
+    [CreatedDate] DATETIME NULL, 
+    [ModifiedDate] DATETIME NULL, 
+    [Version] ROWVERSION NULL,
+)

@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Frameworks.Aspnetcore.Library\Frameworks.Aspnetcore.Library.csproj" />
+    <ProjectReference Include="..\Frameworks.Host.Library\Frameworks.Host.Library.csproj" />
+    <ProjectReference Include="..\Messaging.Contracts.Shared\Messaging.Contracts.Shared.csproj" />
+    <ProjectReference Include="..\Users.Contracts\Users.Contracts.csproj" />
+    <ProjectReference Include="..\Utility.Shared\Utility.Shared.csproj" />
+    <ProjectReference Include="C:\Users\KISHOR\Desktop\.Net\Sol_ModularMonolithicArchitecture\Models.Shared\Models.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Infrastructures\Entity\" />
+  </ItemGroup>
+
+</Project>
