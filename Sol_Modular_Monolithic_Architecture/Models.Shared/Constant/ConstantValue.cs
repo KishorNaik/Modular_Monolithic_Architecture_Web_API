@@ -4,7 +4,7 @@ public static class ConstantValue
 {
     public const double CacheTime = 365 * 7000;
 
-    public const string DbName = "CarbonCredit";
+    public const string DbName = "MainDB";
 
     public const string SqlCacheDbName = "SQLCache";
 
