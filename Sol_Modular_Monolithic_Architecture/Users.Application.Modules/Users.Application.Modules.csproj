@@ -16,7 +16,6 @@
     <ProjectReference Include="..\Messaging.Contracts.Shared\Messaging.Contracts.Shared.csproj" />
     <ProjectReference Include="..\Users.Contracts\Users.Contracts.csproj" />
     <ProjectReference Include="..\Utility.Shared\Utility.Shared.csproj" />
-    <ProjectReference Include="C:\Users\KISHOR\Desktop\.Net\Sol_ModularMonolithicArchitecture\Models.Shared\Models.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
