@@ -24,10 +24,8 @@ public class AddUserResponseDTO
 {
     public Guid? Identifier { get; set; }
 
-    [JsonIgnore]
-    public Guid? EmailToken { get; set; }
-}
+#if DEBUG
+    public Guid? EmailToken { get; set; } = null;
 
-public class AddUserCommand : AddUserRequestDTO, IRequest<DataResponse<AddUserResponseDTO>>
-{
+#endif
 }

@@ -4,6 +4,7 @@
 
 [ApiVersion(1)]
 [Route("api/v{version:apiVersion}/users")]
+[Tags("Users")]
 public class UserLoginController : UserBaseController
 {
     public UserLoginController(IMediator mediator) : base(mediator)
@@ -77,6 +78,9 @@ public static class UserLoginExceptionHandler
 
     public static DataResponse<UserLoginResponseDTO> Token_Generation_Failed =>
         DataResponse.Response<UserLoginResponseDTO>(false, (int?)HttpStatusCode.Conflict, null, "Token Generation Failed.");
+
+    public static DataResponse<UserLoginResponseDTO> Validate_Email_Exception(string errorMessage, int statusCode) =>
+         DataResponse.Response<UserLoginResponseDTO>(false, Convert.ToInt32(statusCode), null, errorMessage);
 }
 
 #endregion Exception Service
@@ -188,6 +192,10 @@ public class UserLoginDataServiceHandler : IRequestHandler<UserLoginDataService,
 
 #region Command Service
 
+public class UserLoginCommand : LoginUserRequestDTO, IRequest<DataResponse<UserLoginResponseDTO>>
+{
+}
+
 public class UserLoginCommandHandler : IRequestHandler<UserLoginCommand, DataResponse<UserLoginResponseDTO>>
 {
     private readonly IMediator mediator = null;
@@ -246,7 +254,7 @@ public class UserLoginCommandHandler : IRequestHandler<UserLoginCommand, DataRes
             var validateEmailResult = await this.mediator.Send(new UserLoginDataService(request.EmailId));
 
             if (validateEmailResult.IsFailed)
-                return UserLoginExceptionHandler.LoginFailed_Command_Handler;
+                return UserLoginExceptionHandler.Validate_Email_Exception(validateEmailResult.Errors[0].Message, Convert.ToInt32(validateEmailResult.Errors[0].Metadata["StatusCode"]));
 
             UserLoginResponseDTO userLoginResponseDTO = validateEmailResult.Value.userLoginResponseDTO;
 

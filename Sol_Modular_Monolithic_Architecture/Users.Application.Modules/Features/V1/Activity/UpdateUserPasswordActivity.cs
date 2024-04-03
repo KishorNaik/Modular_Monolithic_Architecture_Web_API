@@ -6,6 +6,7 @@ namespace Users.Application.Modules.Features.V1.Activity;
 
 [ApiVersion(1)]
 [Route("api/v{version:apiVersion}/users")]
+[Tags("Users")]
 public class UpdateUserPasswordController : UserBaseController
 {
     private readonly IUserProviderService userProviderService = null;
@@ -15,7 +16,7 @@ public class UpdateUserPasswordController : UserBaseController
         this.userProviderService = userProviderService;
     }
 
-    [HttpPatch("update/password")]
+    [HttpPatch("new-password")]
     [MapToApiVersion(1)]
     [DisableRateLimiting]
     [Authorize]
@@ -75,6 +76,10 @@ public static class UpdateUserPasswordExceptionHandler
 #endregion Exception Service
 
 #region Command Service
+
+public class UpdateUserPasswordCommand : UpdateUserPasswordRequestDTO, IRequest<DataResponse<UpdateUserPasswordResponseDTO>>
+{
+}
 
 public class UpdateUserPasswordCommandHandler : IRequestHandler<UpdateUserPasswordCommand, DataResponse<UpdateUserPasswordResponseDTO>>
 {

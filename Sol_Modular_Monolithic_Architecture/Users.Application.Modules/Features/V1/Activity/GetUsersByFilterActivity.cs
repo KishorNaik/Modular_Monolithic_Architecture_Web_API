@@ -6,6 +6,7 @@ namespace Users.Application.Modules.Features.V1.Activity;
 
 [ApiVersion(1)]
 [Route("api/v{version:apiVersion}/users")]
+[Tags("Users")]
 public class GetUsersByFiltersController : UserBaseController
 {
     public GetUsersByFiltersController(IMediator mediator) : base(mediator)
@@ -76,6 +77,10 @@ public static class GetUserByFiltersExceptionHandler
 #endregion Exception Service
 
 #region Query Service Handler
+
+public class GetUsersByFiltersQuery : GetUsersByFiltersRequestDTO, IRequest<DataResponse<List<GetUsersByFiltersResponseDTO>>>
+{
+}
 
 public class GetUsersByFiltersQueryHandler : IRequestHandler<GetUsersByFiltersQuery, DataResponse<List<GetUsersByFiltersResponseDTO>>>
 {

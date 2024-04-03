@@ -20,7 +20,3 @@ public class GetUserByIdentifierResponseDTO
 
     public int UserType { get; set; }
 }
-
-public class GetUserByIdentifierQuery : GetUserByIdentifierRequestDTO, IRequest<DataResponse<GetUserByIdentifierResponseDTO>>
-{
-}

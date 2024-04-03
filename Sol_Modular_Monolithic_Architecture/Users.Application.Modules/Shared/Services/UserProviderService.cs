@@ -1,4 +1,7 @@
-﻿using Users.Contracts.Shared.Enums;
+﻿using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using Users.Contracts.Shared.Enums;
+using Users.Contracts.Shared.Services;
 
 namespace Users.Application.Modules.Shared.Services;
 

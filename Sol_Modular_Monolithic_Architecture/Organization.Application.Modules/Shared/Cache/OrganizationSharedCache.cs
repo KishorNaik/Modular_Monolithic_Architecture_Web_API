@@ -14,12 +14,12 @@ public class OrganizationSharedCacheService : INotification
     public Guid? Identifier { get; }
 }
 
-public class OrgnizationSharedCacheServiceHandler : INotificationHandler<OrganizationSharedCacheService>
+public class OrganizationSharedCacheServiceHandler : INotificationHandler<OrganizationSharedCacheService>
 {
     private readonly IDistributedCache distributedCache = null;
     private readonly IOrganizationSharedRepository organizationSharedRepository;
 
-    public OrgnizationSharedCacheServiceHandler(IDistributedCache distributedCache, IOrganizationSharedRepository organizationSharedRepository, ILogger<OrgnizationSharedCacheServiceHandler> logger)
+    public OrganizationSharedCacheServiceHandler(IDistributedCache distributedCache, IOrganizationSharedRepository organizationSharedRepository, ILogger<OrganizationSharedCacheServiceHandler> logger)
     {
         this.distributedCache = distributedCache;
         this.organizationSharedRepository = organizationSharedRepository;

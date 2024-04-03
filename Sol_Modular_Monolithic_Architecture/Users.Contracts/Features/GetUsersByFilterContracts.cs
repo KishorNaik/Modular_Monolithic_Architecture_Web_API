@@ -24,7 +24,3 @@ public class GetUsersByFiltersResponseDTO
 
     public UserType UserType { get; set; }
 }
-
-public class GetUsersByFiltersQuery : GetUsersByFiltersRequestDTO, IRequest<DataResponse<List<GetUsersByFiltersResponseDTO>>>
-{
-}

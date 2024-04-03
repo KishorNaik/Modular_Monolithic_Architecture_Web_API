@@ -1,4 +1,5 @@
-﻿using Models.Shared.Response;
+﻿using Microsoft.AspNetCore.Http;
+using Models.Shared.Response;
 
 namespace Organization.Application.Modules.Features.V1.Activity;
 
@@ -6,6 +7,7 @@ namespace Organization.Application.Modules.Features.V1.Activity;
 
 [ApiVersion(1)]
 [Route("api/v{version:apiVersion}/organizations")]
+[Tags("Organizations")]
 public class AddOrganizationController : OrganizationBaseController
 {
     public AddOrganizationController(IMediator mediator) : base(mediator)
@@ -155,6 +157,10 @@ public class AddOrganizationDataServiceHandler : IRequestHandler<AddOrganization
 #endregion Data Service
 
 #region Command Service
+
+public class AddOrganizationCommand : AddOrganizationRequestDTO, IRequest<DataResponse<AddOrganizationResponseDTO>>
+{
+}
 
 public class AddOrganizationCommandHandler : IRequestHandler<AddOrganizationCommand, DataResponse<AddOrganizationResponseDTO>>
 {

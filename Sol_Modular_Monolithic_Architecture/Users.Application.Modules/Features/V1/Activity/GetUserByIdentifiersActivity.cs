@@ -4,6 +4,7 @@
 
 [ApiVersion(1)]
 [Route("api/v{version:apiVersion}/users")]
+[Tags("Users")]
 public class GetUserByIdentifierController : UserBaseController
 {
     private readonly IUserProviderService userProvider = null;
@@ -16,11 +17,10 @@ public class GetUserByIdentifierController : UserBaseController
     [HttpGet()]
     [MapToApiVersion(1)]
     [DisableRateLimiting]
-    [Authorize(Policy = ConstantValue.BuyerPolicy)]
-    [Authorize(Policy = ConstantValue.SellerPolicy)]
-    [ProducesResponseType<DataResponse<GetOrganizationByIdentifierQuery>>((int)HttpStatusCode.OK)]
-    [ProducesResponseType<DataResponse<GetOrganizationByIdentifierQuery>>((int)HttpStatusCode.BadRequest)]
-    [ProducesResponseType<DataResponse<GetOrganizationByIdentifierQuery>>((int)HttpStatusCode.NotFound)]
+    [Authorize(Policy = ConstantValue.BuyerSellerPolicy)]
+    [ProducesResponseType<DataResponse<GetUserByIdentifierResponseDTO>>((int)HttpStatusCode.OK)]
+    [ProducesResponseType<DataResponse<GetUserByIdentifierResponseDTO>>((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType<DataResponse<GetUserByIdentifierResponseDTO>>((int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> Get()
     {
         var identifier = this.userProvider.GetUserIdentifier();
@@ -51,6 +51,10 @@ public static class GetUserByIdentifierExceptionHandler
 #endregion Exception Service
 
 #region QueryHandler
+
+public class GetUserByIdentifierQuery : GetUserByIdentifierRequestDTO, IRequest<DataResponse<GetUserByIdentifierResponseDTO>>
+{
+}
 
 public class GetUserByIdentifierQueryHandler : IRequestHandler<GetUserByIdentifierQuery, DataResponse<GetUserByIdentifierResponseDTO>>
 {

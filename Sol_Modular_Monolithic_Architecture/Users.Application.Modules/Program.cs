@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Users.Application.Modules.Shared.Policy;
 using Users.Application.Modules.Shared.Services;
 using Users.Contracts.Shared.Services;
 
@@ -36,6 +37,11 @@ public static class Program
         services.AddScoped<IUserProviderService, UserProviderService>();
         services.AddScoped<IUserSharedRepository, UserSharedRepository>();
         services.AddScoped<IGenerateHashPasswordService, GenerateHashPasswordService>();
+
+        //Register Auth Policy Handler
+        services.AddSingleton<IAuthorizationHandler, BuyerOnlyAuthRequirementHandler>();
+        services.AddSingleton<IAuthorizationHandler, SellerOnlyAuthRequirementHandler>();
+        services.AddSingleton<IAuthorizationHandler, BuyerSellerOnlyAuthRequirementHandler>();
 
         return services;
     }

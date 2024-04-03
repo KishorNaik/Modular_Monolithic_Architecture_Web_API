@@ -58,27 +58,34 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
-    <Folder Include="Tables" />
-    <Folder Include="Schema" />
-    <Folder Include="Indexes" />
-    <Folder Include="Indexes\Org" />
-    <Folder Include="Tables\Org" />
-    <Folder Include="Tables\Users" />
-    <Folder Include="Indexes\Users" />
+    <Folder Include="Modules" />
+    <Folder Include="Modules\Users" />
+    <Folder Include="Modules\Organizations" />
+    <Folder Include="Modules\Organizations\Indexes" />
+    <Folder Include="Modules\Organizations\Schema" />
+    <Folder Include="Modules\Organizations\Tables" />
+    <Folder Include="Modules\Users\Schema" />
+    <Folder Include="Modules\Users\Tables" />
+    <Folder Include="Modules\Users\Indexes" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Schema\UserSchema.sql" />
-    <Build Include="Schema\OrgSchema.sql" />
-    <Build Include="Indexes\Org\IDX_Identifier_Organization.sql" />
-    <Build Include="Indexes\Org\IDX_Name_Organisation.sql" />
-    <Build Include="Tables\Org\TOrganization.sql" />
-    <Build Include="Tables\Users\TUsers.sql" />
-    <Build Include="Tables\Users\TUsersOrganizations.sql" />
-    <Build Include="Indexes\Users\IDX_Identifier_Users.sql" />
-    <Build Include="Indexes\Users\IDX_EmailId_Users.sql" />
-    <Build Include="Indexes\Users\IDX_MobileNo_Users.sql" />
+    <Build Include="Modules\Organizations\Schema\OrgSchema.sql" />
+    <Build Include="Modules\Organizations\Indexes\IDX_Identifier_Organization.sql" />
+    <Build Include="Modules\Organizations\Tables\TOrganization.sql" />
+    <Build Include="Modules\Users\Schema\UserSchema.sql" />
+    <Build Include="Modules\Users\Tables\TUsers.sql" />
+    <Build Include="Modules\Users\Indexes\IDX_EmailId_Users.sql" />
+    <Build Include="Modules\Users\Indexes\IDX_Identifier_Users.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DB.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Modules\Organizations\Indexes\IDX_Name_Organisation.sql" />
+    <Build Include="Modules\Users\Tables\TUsersOrganizations.sql" />
+    <Build Include="Modules\Users\Indexes\IDX_MobileNo_Users.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DB_Local.publish.xml" />
   </ItemGroup>
 </Project>

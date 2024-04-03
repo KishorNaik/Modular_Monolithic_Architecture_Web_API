@@ -9,7 +9,3 @@ public class AddOrganizationResponseDTO
 {
     public Guid? Identifier { get; set; }
 }
-
-public class AddOrganizationCommand : AddOrganizationRequestDTO, IRequest<DataResponse<AddOrganizationResponseDTO>>
-{
-}

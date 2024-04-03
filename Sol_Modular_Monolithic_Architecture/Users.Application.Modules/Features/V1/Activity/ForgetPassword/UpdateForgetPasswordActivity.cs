@@ -4,13 +4,14 @@
 
 [ApiVersion(1)]
 [Route("api/v{version:apiVersion}/users")]
+[Tags("Users")]
 public class UpdateForgetPasswordController : UserBaseController
 {
     public UpdateForgetPasswordController(IMediator mediator) : base(mediator)
     {
     }
 
-    [HttpPatch("forgetPassword/newPassword")]
+    [HttpPatch("forget-password/new-password")]
     [MapToApiVersion(1)]
     [DisableRateLimiting]
     [AllowAnonymous]
@@ -79,6 +80,10 @@ public static class UpdateForgetPasswordExceptionHandler
 #endregion Exception Handler
 
 #region Command Handler
+
+public class UpdateForgetPasswordCommand : UpdateForgetPasswordRequestDTO, IRequest<DataResponse<UpdateForgetPasswordResponseDTO>>
+{
+}
 
 public class UpdateForgetPasswordCommandHandler : IRequestHandler<UpdateForgetPasswordCommand, DataResponse<UpdateForgetPasswordResponseDTO>>
 {

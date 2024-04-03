@@ -4,9 +4,9 @@ namespace Users.Contracts.Features.ForgetPassword;
 
 public class EmailVerificationForgetPasswordApiRequestDTO
 {
-    [FromRoute]
-    [JsonIgnore]
-    public Guid? Token { get; set; }
+    //[FromRoute]
+    //[JsonIgnore]
+    //public Guid? Token { get; set; }
 
     [FromBody]
     public EmailVerificationForgetPasswordRequestDTO Body { get; set; }
@@ -20,8 +20,8 @@ public class EmailVerificationForgetPasswordRequestDTO
 public class EmailVerificationForgetPasswordResponseDTO
 {
     public DateTime GenerateDateTime { get; set; }
-}
 
-public class EmailVerificationForgetPasswordCommand : EmailVerificationForgetPasswordApiRequestDTO, IRequest<DataResponse<EmailVerificationForgetPasswordResponseDTO>>
-{
+#if DEBUG
+    public Guid? PasswordResetToken { get; set; }
+#endif
 }

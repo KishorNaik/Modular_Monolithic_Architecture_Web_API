@@ -4,6 +4,7 @@
 
 [ApiVersion(1)]
 [Route("api/v{version:apiVersion}/users")]
+[Tags("Users")]
 public class UpdateUserController : UserBaseController
 {
     private readonly IUserProviderService userProviderService = null;
@@ -221,6 +222,10 @@ public class UpdateUserDataServiceHandler : IRequestHandler<UpdateUserDataServic
 #endregion Data Service
 
 #region Command Service Handler
+
+public class UpdateUserCommand : UpdateUserRequestBodyDTO, IRequest<DataResponse<UpdateUserResponseDTO>>
+{
+}
 
 public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, DataResponse<UpdateUserResponseDTO>>
 {

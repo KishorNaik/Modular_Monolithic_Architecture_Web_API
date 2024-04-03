@@ -9,8 +9,9 @@ namespace Host.API.Extensions
         {
             return (option) =>
             {
-                option.AddPolicy("SellerOnly", (policy) => policy.Requirements.Add(new SellerOnlyAuthRequirement(Users.Contracts.Shared.Enums.UserType.Seller)));
-                option.AddPolicy("BuyerOnly", (policy) => policy.Requirements.Add(new BuyerOnlyAuthRequirement(Users.Contracts.Shared.Enums.UserType.Buyer)));
+                option.AddPolicy(ConstantValue.SellerPolicy, (policy) => policy.Requirements.Add(new SellerOnlyAuthRequirement(Users.Contracts.Shared.Enums.UserType.Seller)));
+                option.AddPolicy(ConstantValue.BuyerPolicy, (policy) => policy.Requirements.Add(new BuyerOnlyAuthRequirement(Users.Contracts.Shared.Enums.UserType.Buyer)));
+                option.AddPolicy(ConstantValue.BuyerSellerPolicy, (policy) => policy.Requirements.Add(new BuyerSellerOnlyAuthRequirement()));
             };
         }
     }

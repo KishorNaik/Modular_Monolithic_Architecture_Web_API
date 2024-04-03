@@ -1,3 +1,7 @@
+﻿// श्री कृष्ण
+// Developer Name: Kishor Naik
+// Designation: Sr.Software Architect
+// Co-Founder: Kishor Naik
 using Frameworks.Aspnetcore.Library.Extensions;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Mvc;
@@ -54,6 +58,24 @@ builder.Services.AddJwtToken(jwtAppSetting, JwtPolicyRegisterExtension.GetRegist
 // [FromRoute][FromQuery][FromBody] in one Model.
 builder.Services.Configure<ApiBehaviorOptions>((options) => options.SuppressInferBindingSourcesForParameters = true);
 
+//builder.Services.AddDistributedRedisCache(builder.Environment, "Test", new RedisConfig()
+//{
+//    DefaultDatabase = 0,
+//    Password = "",
+//    EndPoints = new List<RedisEndPoints> {
+//       new RedisEndPoints()
+//       {
+//           Host="",
+//           Port=1
+//       },
+//       new RedisEndPoints()
+//       {
+//           Host="",
+//           Port=1
+//       }
+//   }
+//});
+
 builder.AddModules();
 
 var app = builder.Build();
@@ -80,10 +102,13 @@ app.MapHealthChecks("/health", new HealthCheckOptions()
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 
+app.UseApiKeyMiddleware(builder.Configuration);
+
 app.UseSecurityHeadersMiddleware();
 
 app.UseAntiforgery();
 
+app.UseAuthorizeExceptionMiddleware();
 app.UseJwtToken();
 
 app.UseRateLimiter();

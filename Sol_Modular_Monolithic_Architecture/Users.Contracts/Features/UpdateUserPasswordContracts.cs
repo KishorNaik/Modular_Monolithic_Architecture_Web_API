@@ -12,7 +12,3 @@ public class UpdateUserPasswordResponseDTO
 {
     public DateTime? UpdatedTime { get; set; }
 }
-
-public class UpdateUserPasswordCommand : UpdateUserPasswordRequestDTO, IRequest<DataResponse<UpdateUserPasswordResponseDTO>>
-{
-}

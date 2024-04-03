@@ -4,13 +4,14 @@
 
 [ApiVersion(1)]
 [Route("api/v{version:apiVersion}/users")]
+[Tags("Users")]
 public class EmailVerificationSignUpController : UserBaseController
 {
     public EmailVerificationSignUpController(IMediator mediator) : base(mediator)
     {
     }
 
-    [HttpPost("emailVerificationsSignUp/{Token}")]
+    [HttpPost("email-verifications-sign-up/{token}")]
     [MapToApiVersion(1)]
     [DisableRateLimiting]
     [AllowAnonymous]
@@ -43,7 +44,7 @@ public class EmailVerificationSignUpValidation : AbstractValidator<EmailVerifica
         RuleFor(x => x.Token)
             .Must((context, id, propertyValidatorContext) =>
             {
-                var token = (string)actionContextAccessor.ActionContext.RouteData.Values.GetValueOrDefault("Token");
+                var token = (string)actionContextAccessor.ActionContext.RouteData.Values.GetValueOrDefault("token");
 
                 if (token is null)
                     return false;
@@ -54,7 +55,7 @@ public class EmailVerificationSignUpValidation : AbstractValidator<EmailVerifica
             .WithErrorCode("Token")
             .Must((context, id, propertyValidatorContext) =>
             {
-                var token = (string)actionContextAccessor.ActionContext.RouteData.Values.GetValueOrDefault("Token");
+                var token = (string)actionContextAccessor.ActionContext.RouteData.Values.GetValueOrDefault("token");
 
                 Guid tokenGuid;
                 var flag = Guid.TryParse(token, out tokenGuid);
@@ -88,6 +89,10 @@ public static class EmailVerificationSignUpExceptionHandler
 #endregion Exception Service
 
 #region Command Service
+
+public class EmailVerificationSignUpCommand : EmailVerificationSignUpRequestDTO, IRequest<DataResponse<EmailVerificationSignUpResponseDTO>>
+{
+}
 
 public class EmailVerificationSignUpCommandHandler : IRequestHandler<EmailVerificationSignUpCommand, DataResponse<EmailVerificationSignUpResponseDTO>>
 {

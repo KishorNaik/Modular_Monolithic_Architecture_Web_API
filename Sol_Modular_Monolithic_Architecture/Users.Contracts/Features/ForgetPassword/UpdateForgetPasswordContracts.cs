@@ -11,7 +11,3 @@ public class UpdateForgetPasswordResponseDTO
 {
     public DateTime GenerateDateTime { get; set; }
 }
-
-public class UpdateForgetPasswordCommand : UpdateForgetPasswordRequestDTO, IRequest<DataResponse<UpdateForgetPasswordResponseDTO>>
-{
-}

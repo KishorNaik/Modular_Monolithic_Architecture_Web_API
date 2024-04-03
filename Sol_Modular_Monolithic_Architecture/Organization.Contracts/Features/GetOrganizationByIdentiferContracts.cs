@@ -18,6 +18,6 @@ public class GetOrganizationByIdentifierResponseDTO
     public int OrgType { get; set; }
 }
 
-public class GetOrganizationByIdentifierQuery : GetOrganizationByIdentifierRequestDTO, IRequest<DataResponse<GetOrganizationByIdentifierResponseDTO>>
+public class GetOrganizationByIdentifierIntegrationService : GetOrganizationByIdentifierRequestDTO, IRequest<DataResponse<GetOrganizationByIdentifierResponseDTO>>
 {
 }

@@ -14,6 +14,7 @@
     <ProjectReference Include="..\Frameworks.Aspnetcore.Library\Frameworks.Aspnetcore.Library.csproj" />
     <ProjectReference Include="..\Frameworks.Host.Library\Frameworks.Host.Library.csproj" />
     <ProjectReference Include="..\Messaging.Contracts.Shared\Messaging.Contracts.Shared.csproj" />
+    <ProjectReference Include="..\Models.Shared\Models.Shared.csproj" />
     <ProjectReference Include="..\Users.Contracts\Users.Contracts.csproj" />
     <ProjectReference Include="..\Utility.Shared\Utility.Shared.csproj" />
   </ItemGroup>

@@ -25,7 +25,7 @@ public class OrganizationSharedRepository : IOrganizationSharedRepository
                                                                 .AsQueryable()
                                                                 .AsParallel()
                                                                 .AsSequential()
-                                                                .FirstOrDefault((element) => element.Identifier.Equals(identifier));
+                                                                .FirstOrDefault((element) => element.Identifier.Equals(identifier) && element.Status == Convert.ToBoolean((int)StatusEnum.Active));
             if (result is null)
                 return Result.Fail<TOrganization>(new FluentResults.Error("The orgnisation is not found").WithMetadata("StatusCode", HttpStatusCode.NotFound));
 

@@ -6,6 +6,7 @@ namespace Users.Application.Modules.Features.V1.Activity;
 
 [ApiVersion(1)]
 [Route("api/v{version:apiVersion}/users")]
+[Tags("Users")]
 public class AddUserController : UserBaseController
 {
     public AddUserController(IMediator mediator) : base(mediator)
@@ -297,6 +298,10 @@ public class AddUserDataServiceHandler : IRequestHandler<AddUserDataService, Res
 
 #region Command Service
 
+public class AddUserCommand : AddUserRequestDTO, IRequest<DataResponse<AddUserResponseDTO>>
+{
+}
+
 public class AddUserCommandHandler : IRequestHandler<AddUserCommand, DataResponse<AddUserResponseDTO>>
 {
     private readonly IMediator mediator = null;
@@ -333,7 +338,7 @@ public class AddUserCommandHandler : IRequestHandler<AddUserCommand, DataRespons
     private async Task<DataResponse<AddUserResponseDTO>> IsValidOrgIdAsync(Guid? orgId)
     {
         // Get Org data by Messaging queue
-        var response = await this.mediator.Send(new GetOrganizationByIdentifierQuery()
+        var response = await this.mediator.Send(new GetOrganizationByIdentifierIntegrationService()
         {
             Identifier = orgId
         });
@@ -367,10 +372,10 @@ public class AddUserCommandHandler : IRequestHandler<AddUserCommand, DataRespons
             }
 
             // Generate Hash Password
-            var generateHashResult = await GenerateHashPasswordAsync(request.Password);
+            var generateHashResult = await this.GenerateHashPasswordAsync(request.Password);
 
             // Save
-            var addUserResult = await AddAsync(request, generateHashResult.salt, generateHashResult.hash, request.OrgId, cancellationToken);
+            var addUserResult = await this.AddAsync(request, generateHashResult.salt, generateHashResult.hash, request.OrgId, cancellationToken);
 
             if (addUserResult is not null && addUserResult.Success == true)
             {

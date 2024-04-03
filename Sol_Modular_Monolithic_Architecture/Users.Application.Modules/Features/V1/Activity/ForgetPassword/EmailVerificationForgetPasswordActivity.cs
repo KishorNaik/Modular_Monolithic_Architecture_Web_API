@@ -4,13 +4,14 @@
 
 [ApiVersion(1)]
 [Route("api/v{version:apiVersion}/users")]
+[Tags("Users")]
 public class EmailVerificationForgetPasswordController : UserBaseController
 {
     public EmailVerificationForgetPasswordController(IMediator mediator) : base(mediator)
     {
     }
 
-    [HttpPost("forgetPassword/emailVerifications/{Token}")]
+    [HttpPost("forget-password/email-verifications")]
     [MapToApiVersion(1)]
     [DisableRateLimiting]
     [AllowAnonymous]
@@ -35,36 +36,36 @@ public class EmailVerificationForgetPasswordValidation : AbstractValidator<Email
     {
         this.actionContextAccessor = actionContextAccessor;
 
-        this.TokenValidation();
+        //this.TokenValidation();
         this.EmailIdValidation();
     }
 
-    private void TokenValidation()
-    {
-        RuleFor(x => x.Token)
-            .Must((context, id, propertyValidatorContext) =>
-            {
-                var token = (string)actionContextAccessor.ActionContext.RouteData.Values.GetValueOrDefault("Token");
+    //private void TokenValidation()
+    //{
+    //    RuleFor(x => x.Token)
+    //        .Must((context, id, propertyValidatorContext) =>
+    //        {
+    //            var token = (string)actionContextAccessor.ActionContext.RouteData.Values.GetValueOrDefault("Token");
 
-                if (token is null)
-                    return false;
+    //            if (token is null)
+    //                return false;
 
-                return true;
-            })
-            .WithMessage("token should not be empty")
-            .WithErrorCode("Token")
-            .Must((context, id, propertyValidatorContext) =>
-            {
-                var token = (string)actionContextAccessor.ActionContext.RouteData.Values.GetValueOrDefault("Token");
+    //            return true;
+    //        })
+    //        .WithMessage("token should not be empty")
+    //        .WithErrorCode("Token")
+    //        .Must((context, id, propertyValidatorContext) =>
+    //        {
+    //            var token = (string)actionContextAccessor.ActionContext.RouteData.Values.GetValueOrDefault("Token");
 
-                Guid tokenGuid;
-                var flag = Guid.TryParse(token, out tokenGuid);
+    //            Guid tokenGuid;
+    //            var flag = Guid.TryParse(token, out tokenGuid);
 
-                return flag;
-            })
-            .WithMessage("Token should be guid")
-            .WithErrorCode("Token");
-    }
+    //            return flag;
+    //        })
+    //        .WithMessage("Token should be guid")
+    //        .WithErrorCode("Token");
+    //}
 
     private void EmailIdValidation()
     {
@@ -94,6 +95,10 @@ public static class EmailVerificationForgetPasswordExceptionHandler
 
 #region Command Service
 
+public class EmailVerificationForgetPasswordCommand : EmailVerificationForgetPasswordApiRequestDTO, IRequest<DataResponse<EmailVerificationForgetPasswordResponseDTO>>
+{
+}
+
 public class EmailVerificationForgetPasswordCommandHandler : IRequestHandler<EmailVerificationForgetPasswordCommand, DataResponse<EmailVerificationForgetPasswordResponseDTO>>
 {
     private readonly IUserSharedRepository userSharedRepository;
@@ -116,11 +121,12 @@ public class EmailVerificationForgetPasswordCommandHandler : IRequestHandler<Ema
         await this.usersContext.SaveChangesAsync();
     }
 
-    private DataResponse<EmailVerificationForgetPasswordResponseDTO> Response()
+    private DataResponse<EmailVerificationForgetPasswordResponseDTO> Response(Guid? generatePasswordResetToken)
     {
         return DataResponse.Response<EmailVerificationForgetPasswordResponseDTO>(true, Convert.ToInt32(HttpStatusCode.OK), new EmailVerificationForgetPasswordResponseDTO()
         {
-            GenerateDateTime = DateTime.Now
+            GenerateDateTime = DateTime.Now,
+            PasswordResetToken = generatePasswordResetToken
         }, "Generate Password Reset Token");
     }
 
@@ -155,7 +161,7 @@ public class EmailVerificationForgetPasswordCommandHandler : IRequestHandler<Ema
             BackgroundJob.Enqueue(() => this.OnPublishGeneratePasswordResetTokenUpdatedDomainEvent(tuser.EmailId, generatePasswordResetToken, tuser.Identifier));
 
             // Response
-            return this.Response();
+            return this.Response(generatePasswordResetToken);
         }
         catch (Exception ex)
         {

@@ -10,7 +10,3 @@ public class EmailVerificationSignUpResponseDTO
 {
     public DateTime GenerateDateTime { get; set; }
 }
-
-public class EmailVerificationSignUpCommand : EmailVerificationSignUpRequestDTO, IRequest<DataResponse<EmailVerificationSignUpResponseDTO>>
-{
-}

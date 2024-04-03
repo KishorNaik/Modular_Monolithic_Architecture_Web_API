@@ -1,4 +1,5 @@
-﻿using Users.Contracts.Shared.Services;
+﻿using Microsoft.AspNetCore.Http;
+using Users.Contracts.Shared.Services;
 using Utility.Shared.Cache;
 
 namespace Organization.Application.Modules.Features.V1.Activity;
@@ -7,6 +8,7 @@ namespace Organization.Application.Modules.Features.V1.Activity;
 
 [ApiVersion(1)]
 [Route("api/v{version:apiVersion}/organizations")]
+[Tags("Organizations")]
 public class GetOrganizationByIdentifierController : OrganizationBaseController
 {
     private readonly IUserProviderService userProviderService;
@@ -16,11 +18,10 @@ public class GetOrganizationByIdentifierController : OrganizationBaseController
         this.userProviderService = userProviderService;
     }
 
-    [HttpGet("{Identifier}")]
+    [HttpGet("{identifier}")]
     [MapToApiVersion(1)]
     [DisableRateLimiting]
-    [Authorize()]
-    //[AllowAnonymous]
+    [Authorize(Policy = ConstantValue.BuyerSellerPolicy)]
     [ProducesResponseType<DataResponse<GetOrganizationByIdentifierQuery>>((int)HttpStatusCode.OK)]
     [ProducesResponseType<DataResponse<GetOrganizationByIdentifierQuery>>((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType<DataResponse<GetOrganizationByIdentifierQuery>>((int)HttpStatusCode.NotFound)]
@@ -52,7 +53,7 @@ public class GetOrganizationByIdentifierValidation : AbstractValidator<GetOrgani
         RuleFor(x => x.Identifier)
             .Must((context, id, propertyValidatorContext) =>
             {
-                var identifier = (string)actionContextAccessor.ActionContext.RouteData.Values.GetValueOrDefault("Identifier");
+                var identifier = (string)actionContextAccessor.ActionContext.RouteData.Values.GetValueOrDefault("identifier");
 
                 if (identifier is null)
                     return false;
@@ -63,7 +64,7 @@ public class GetOrganizationByIdentifierValidation : AbstractValidator<GetOrgani
             .WithErrorCode("Identifier")
             .Must((context, id, propertyValidatorContext) =>
             {
-                var identifier = (string)actionContextAccessor.ActionContext.RouteData.Values.GetValueOrDefault("Identifier");
+                var identifier = (string)actionContextAccessor.ActionContext.RouteData.Values.GetValueOrDefault("identifier");
 
                 Guid identifierGuid;
                 var flag = Guid.TryParse(identifier, out identifierGuid);
@@ -92,6 +93,10 @@ public static class GetOrganizationExceptionHandler
 
 #region Query Handler Service
 
+public class GetOrganizationByIdentifierQuery : GetOrganizationByIdentifierRequestDTO, IRequest<DataResponse<GetOrganizationByIdentifierResponseDTO>>
+{
+}
+
 public class GetOrganizationByIdentifierQueryHandler : IRequestHandler<GetOrganizationByIdentifierQuery, DataResponse<GetOrganizationByIdentifierResponseDTO>>
 {
     private readonly IOrganizationSharedRepository organizationSharedRepository = null;
@@ -109,8 +114,7 @@ public class GetOrganizationByIdentifierQueryHandler : IRequestHandler<GetOrgani
         {
             Id = organization.Id,
             Identifier = organization.Identifier,
-            Name = organization.Name,
-            OrgType = organization.OrgType
+            Name = organization.Name
         };
     }
 
@@ -171,3 +175,25 @@ public class GetOrganizationByIdentifierQueryHandler : IRequestHandler<GetOrgani
 }
 
 #endregion Query Handler Service
+
+#region Event Service
+
+public class GetOrganizationByIdentifierIntegrationServiceHandler : IRequestHandler<GetOrganizationByIdentifierIntegrationService, DataResponse<GetOrganizationByIdentifierResponseDTO>>
+{
+    private readonly IMediator mediator = null;
+
+    public GetOrganizationByIdentifierIntegrationServiceHandler(IMediator mediator)
+    {
+        this.mediator = mediator;
+    }
+
+    async Task<DataResponse<GetOrganizationByIdentifierResponseDTO>> IRequestHandler<GetOrganizationByIdentifierIntegrationService, DataResponse<GetOrganizationByIdentifierResponseDTO>>.Handle(GetOrganizationByIdentifierIntegrationService request, CancellationToken cancellationToken)
+    {
+        return await this.mediator.Send(new GetOrganizationByIdentifierQuery()
+        {
+            Identifier = request.Identifier
+        }, cancellationToken);
+    }
+}
+
+#endregion Event Service

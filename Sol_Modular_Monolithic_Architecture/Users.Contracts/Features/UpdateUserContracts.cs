@@ -23,7 +23,3 @@ public class UpdateUserResponseDTO
 {
     public Guid? Identifier { get; set; }
 }
-
-public class UpdateUserCommand : UpdateUserRequestBodyDTO, IRequest<DataResponse<UpdateUserResponseDTO>>
-{
-}

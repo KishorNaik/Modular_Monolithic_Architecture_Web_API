@@ -4,13 +4,14 @@
 
 [ApiVersion(1)]
 [Route("api/v{version:apiVersion}/users")]
+[Tags("Users")]
 public class RefreshTokenController : UserBaseController
 {
     public RefreshTokenController(IMediator mediator) : base(mediator)
     {
     }
 
-    [HttpPost("refreshToken")]
+    [HttpPost("refresh-token")]
     [MapToApiVersion(1)]
     [DisableRateLimiting]
     [AllowAnonymous]
@@ -78,6 +79,10 @@ public static class RefreshTokenExceptionHandler
 #endregion Exception Service
 
 #region Command Service
+
+public class RefreshTokenCommand : RefreshTokenRequestDTO, IRequest<DataResponse<UserJwtTokenResponseDTO>>
+{
+}
 
 public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, DataResponse<UserJwtTokenResponseDTO>>
 {

@@ -36,7 +36,7 @@ public class UserSharedRepository : IUserSharedRepository
         try
         {
             var tUserResult = await this.usersContext.Tusers.AsNoTracking()
-                                                    .FirstOrDefaultAsync((e) => e.Identifier == userIdentifer);
+                                                    .FirstOrDefaultAsync((e) => e.Identifier == userIdentifer && e.Status == Convert.ToBoolean((int)StatusEnum.Active));
 
             var tUserOrgResult = await this.usersContext.TusersOrganizations.AsNoTracking()
                                                     .FirstOrDefaultAsync((e) => e.UserId == userIdentifer);
