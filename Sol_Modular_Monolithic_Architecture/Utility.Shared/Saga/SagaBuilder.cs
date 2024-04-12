@@ -8,7 +8,7 @@ public class SagaResult<T>
         this.Results = results;
     }
 
-    public bool IsSuccess { get; }
+    public bool IsSuccess { get; set; }
 
     public T Results { get; }
 }
@@ -25,14 +25,14 @@ public class CompensationActivityModel<T>
     }
 }
 
-public interface ISagaActivity
+public interface ISagaActivity<T>
 {
     string? ActivityName { get; }
-    Func<Task<SagaResult<dynamic>>> Action { get; }
-    List<Func<SagaResult<dynamic>, Task>> Compensations { get; }
+    Func<Task<SagaResult<T>>> Action { get; }
+    List<Func<SagaResult<T>, Task>> Compensations { get; }
 }
 
-public class SagaActivity<T> : ISagaActivity
+public class SagaActivity<T> : ISagaActivity<T>
 {
     public string? ActivityName { get; }
 
@@ -40,9 +40,9 @@ public class SagaActivity<T> : ISagaActivity
 
     public List<CompensationActivityModel<T>> Compensations { get; set; } = new List<CompensationActivityModel<T>>();
 
-    Func<Task<SagaResult<dynamic>>> ISagaActivity.Action => () => Action().ContinueWith(t => new SagaResult<dynamic>(t.Result.IsSuccess, t.Result.Results));
+    Func<Task<SagaResult<T>>> ISagaActivity<T>.Action => () => Action().ContinueWith(t => new SagaResult<T>(t.Result.IsSuccess, t.Result.Results));
 
-    List<Func<SagaResult<dynamic>, Task>> ISagaActivity.Compensations => Compensations.Select(c => (Func<SagaResult<dynamic>, Task>)(r => c.Action(new SagaResult<T>(r.IsSuccess, (T)r.Results)))).ToList();
+    List<Func<SagaResult<T>, Task>> ISagaActivity<T>.Compensations => Compensations.Select(c => (Func<SagaResult<T>, Task>)(r => c.Action(new SagaResult<T>(r.IsSuccess, (T)r.Results)))).ToList();
 
     public SagaActivity(string activityName, Func<Task<SagaResult<T>>> action)
     {
@@ -51,21 +51,21 @@ public class SagaActivity<T> : ISagaActivity
     }
 }
 
-public class ActivityResult
+public class ActivityResult<T>
 {
-    public ActivityResult(string activityName, SagaResult<dynamic> sagaResult)
+    public ActivityResult(string activityName, SagaResult<T> sagaResult)
     {
         this.ActivityName = activityName;
         this.SagaResult = sagaResult;
     }
 
     public string ActivityName { get; }
-    public SagaResult<dynamic> SagaResult { get; }
+    public SagaResult<T> SagaResult { get; }
 }
 
-public class SagaBuilder
+public class SagaBuilder<T>
 {
-    private List<ISagaActivity> Activities { get; } = new List<ISagaActivity>();
+    private List<ISagaActivity<T>> Activities { get; } = new List<ISagaActivity<T>>();
 
     public SagaBuilder(string sagaName)
     {
@@ -74,15 +74,15 @@ public class SagaBuilder
 
     public string? SagaName { get; }
 
-    public List<ActivityResult> ActivityResults { get; } = new List<ActivityResult>();
+    public List<ActivityResult<T>> ActivityResults { get; } = new List<ActivityResult<T>>();
 
-    public SagaBuilder Activity<T>(string activityName, Func<Task<SagaResult<T>>> action)
+    public SagaBuilder<T> Activity(string activityName, Func<Task<SagaResult<T>>> action)
     {
-        Activities.Add(new SagaActivity<T>(activityName, action));
+        Activities.Add(new SagaActivity<T>(activityName!, action));
         return this;
     }
 
-    public SagaBuilder CompensationActivity<T>(string activityName, string compensationName, Func<SagaResult<T>, Task> compensation)
+    public SagaBuilder<T> CompensationActivity(string activityName, string compensationName, Func<SagaResult<T>, Task> compensation)
     {
         var activity = Activities.OfType<SagaActivity<T>>().FirstOrDefault(e => e.ActivityName == activityName);
         if (activity != null)
@@ -101,13 +101,13 @@ public class SagaBuilder
                 var result = await activity.Action();
 
                 if (result is not null)
-                    ActivityResults.Add(new ActivityResult(activity.ActivityName, result));
+                    ActivityResults.Add(new ActivityResult<T>(activity.ActivityName!, result));
 
-                if (!result.IsSuccess && activity.Compensations.Any())
+                if (activity.Compensations.Any())
                 {
                     foreach (var compensation in activity.Compensations)
                     {
-                        await compensation(result);
+                        await compensation(result!);
                     }
                 }
             }

@@ -118,11 +118,12 @@ public class RemoveUserCommandHandler : IRequestHandler<RemoveUserCommand, DataR
 
 public class RemoveUserActivitySagaResult
 {
-    public RemoveUserActivitySagaResult(IDbContextTransaction dbContextTransaction, UserEntityResultSet userEntityResultSet, Result removeOrgResult = default)
+    public RemoveUserActivitySagaResult(IDbContextTransaction dbContextTransaction, UserEntityResultSet userEntityResultSet, Result removeOrgResult, Result removeUserResult)
     {
         this.DbContextTransaction = dbContextTransaction;
         this.UserEntityResult = userEntityResultSet;
         this.RemoveOrgResult = removeOrgResult;
+        this.RemoveUserResult = removeUserResult;
     }
 
     public IDbContextTransaction DbContextTransaction { get; }
@@ -130,6 +131,8 @@ public class RemoveUserActivitySagaResult
     public UserEntityResultSet UserEntityResult { get; }
 
     public Result RemoveOrgResult { get; }
+
+    public Result RemoveUserResult { get; }
 }
 
 public class RemoveUserSagaOrchestratorService : IRequest<bool>
@@ -201,8 +204,8 @@ public class RemoveUserSagaOrchestratorServiceHandler : IRequestHandler<RemoveUs
         ;
         try
         {
-            var sagaBuilder = new SagaBuilder("Remove-User-Saga");
-            sagaBuilder.Activity<RemoveUserActivitySagaResult>("Remove-User-Activity", async () =>
+            var sagaBuilder = new SagaBuilder<RemoveUserActivitySagaResult>("Remove-User-Saga");
+            sagaBuilder.Activity("Remove-User-Activity", async () =>
             {
                 // Remove Org
                 var removeOrgResult = await this.RemoveOrgAsync(request);
@@ -210,25 +213,27 @@ public class RemoveUserSagaOrchestratorServiceHandler : IRequestHandler<RemoveUs
                 // Remove User
                 var removeUserResult = await this.RemoveUserAsync(request.UserEntityResult.User!);
 
-                if (removeUserResult.IsFailed)
-                    return new SagaResult<RemoveUserActivitySagaResult>(false, new RemoveUserActivitySagaResult(request.DbContextTransaction, request.UserEntityResult, removeOrgResult));
-
-                return new SagaResult<RemoveUserActivitySagaResult>(true, new RemoveUserActivitySagaResult(request.DbContextTransaction, request.UserEntityResult, removeOrgResult));
+                return new SagaResult<RemoveUserActivitySagaResult>(true, new RemoveUserActivitySagaResult(request.DbContextTransaction, request.UserEntityResult, removeOrgResult, removeUserResult));
             })
-            .CompensationActivity<RemoveUserActivitySagaResult>("Remove-User-Activity", "RollBack-Remove-Org-Activity", async s =>
+            .CompensationActivity("Remove-User-Activity", "RollBack-User-Activity", async s =>
             {
-                if (s.IsSuccess == false && s?.Results?.RemoveOrgResult?.IsFailed == true)
+                if (s?.Results?.RemoveUserResult?.IsFailed == true)
                 {
                     await this.mediator.Send(new RemoveOrganizationRollBackIntegrationService()
                     {
                         Identifier = s.Results.UserEntityResult.Organization.OrgId
                     });
+
+                    s.IsSuccess = false;
                 }
             })
-            .CompensationActivity<RemoveUserActivitySagaResult>("Remove-User-Activity", "RollBack-Remove-User-Activity", async s =>
+            .CompensationActivity("Remove-User-Activity", "RollBack-Org-Activity", async s =>
             {
-                if (s.IsSuccess == false)
+                if (s.Results.RemoveOrgResult?.IsFailed == true)
+                {
                     await s.Results.DbContextTransaction.RollbackAsync();
+                    s.IsSuccess = false;
+                }
             });
 
             await sagaBuilder.ExecuteAsync();
